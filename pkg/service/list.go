@@ -24,7 +24,6 @@ func (s *ListService) GetById(listId string) (todo.List, error) {
 	return s.repo.GetById(listId)
 }
 
-func (s *ListService) Update(listId string, input todo.List) error {
+func (s *ListService) Update(listId string, input todo.List) (todo.List, error) {
 	return s.repo.Update(listId, input)
-
 }

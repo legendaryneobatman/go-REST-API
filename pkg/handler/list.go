@@ -52,14 +52,21 @@ func (h *Handler) getListById(c *gin.Context) {
 	c.JSON(http.StatusOK, list)
 }
 func (h *Handler) updateList(c *gin.Context) {
-	updatedList, err := h.services.List.Update(c.Param("id"), c.Request.Body)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	updatedList := todo.List{}
+	if err := c.BindJSON(&updatedList); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, updatedList)
+	if list, err := h.services.List.Update(c.Param("id"), updatedList); err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	} else {
+		c.JSON(http.StatusOK, list)
+		return
+	}
 }
+
 func (h *Handler) deleteList(c *gin.Context) {
 
 }

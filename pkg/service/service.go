@@ -15,7 +15,7 @@ type List interface {
 	Create(userId int, list models.List) (int, error)
 	GetAll(userId int) ([]models.List, error)
 	GetById(listId string) (models.List, error)
-	Update(listId string, input models.List) error
+	Update(listId string, input models.List) (models.List, error)
 }
 
 type TodoItem interface {

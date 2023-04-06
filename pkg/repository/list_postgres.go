@@ -65,19 +65,13 @@ func (r *ListPostgres) GetById(listId string) (todo.List, error) {
 	return list, nil
 }
 
-func (r *ListPostgres) Update(listId string, input todo.List) error {
-	targetList, err := r.GetById(listId)
-	if err != nil {
-		return err
+func (r *ListPostgres) Update(listId string, input todo.List) (todo.List, error) {
+	var list todo.List
+	query := fmt.Sprintf("UPDATE %s SET title = $1, description = $2 WHERE id = $3 RETURNING *", listsTable)
+	row := r.db.QueryRow(query, input.Title, input.Description, listId)
+	if err := row.Scan(&list.Id, &list.UserId, &list.Title, &list.Description); err != nil {
+		return todo.List{}, err
 	}
-	if input.Title != "" {
-		targetList.Title = input.Title
-	}
-	if input.Description != "" {
-		targetList.Description = input.Description
-	}
-	query := fmt.Sprintf("UPDATE %s SET title = $1, description = $2 WHERE id = $3", listsTable)
-	row := r.db.QueryRow(query, targetList.Title, targetList.Description, listId)
 
-	return row.Scan()
+	return list, nil
 }
